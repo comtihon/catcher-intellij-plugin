@@ -11,9 +11,9 @@
         <applicationService
                 serviceImplementation="com.github.comtihon.catcherintellijplugin.services.MyApplicationService"/>
         <projectService serviceImplementation="com.github.comtihon.catcherintellijplugin.services.MyProjectService"/>
-    </extensions>
 
-    <extensions defaultExtensionNs="com.intellij">
+        <moduleType id="CATCHER_MODULE_TYPE" implementationClass="com.github.comtihon.catcherintellijplugin.project.CatcherModuleType"/>
+
         <fileType name="Catcher Test File"
                   implementationClass="com.github.comtihon.catcherintellijplugin.language.CatcherFileType"
                   fieldName="INSTANCE" language="Catcher" extensions="xml"/>
