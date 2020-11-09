@@ -1,6 +1,6 @@
 <idea-plugin>
     <id>com.github.comtihon.catcherintellijplugin</id>
-    <name>catcher-intellij-plugin</name>
+    <name>Catcher</name>
     <vendor>comtihon</vendor>
 
     <!-- Product and plugin compatibility requirements -->
@@ -8,8 +8,15 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.github.comtihon.catcherintellijplugin.services.MyApplicationService"/>
+        <applicationService
+                serviceImplementation="com.github.comtihon.catcherintellijplugin.services.MyApplicationService"/>
         <projectService serviceImplementation="com.github.comtihon.catcherintellijplugin.services.MyProjectService"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType name="Catcher Test File"
+                  implementationClass="com.github.comtihon.catcherintellijplugin.language.CatcherFileType"
+                  fieldName="INSTANCE" language="Catcher" extensions="xml"/>
     </extensions>
 
     <applicationListeners>

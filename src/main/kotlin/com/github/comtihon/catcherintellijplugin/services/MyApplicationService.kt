@@ -1,10 +1,11 @@
 package com.github.comtihon.catcherintellijplugin.services
 
-import com.github.comtihon.catcherintellijplugin.MyBundle
+import com.github.comtihon.catcherintellijplugin.Catcher
+
 
 class MyApplicationService {
 
     init {
-        println(MyBundle.message("applicationService"))
+        println(Catcher.message("applicationService"))
     }
 }
