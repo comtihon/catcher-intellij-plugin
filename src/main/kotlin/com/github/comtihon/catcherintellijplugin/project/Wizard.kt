@@ -1,14 +1,15 @@
 package com.github.comtihon.catcherintellijplugin.project
 
+import com.github.comtihon.catcherintellijplugin.services.SdkService
 import com.intellij.ide.util.projectWizard.ModuleWizardStep
-import com.intellij.openapi.ui.ComboBox
+import com.intellij.openapi.projectRoots.SdkType
+import com.intellij.ui.layout.panel
+import javax.swing.DefaultComboBoxModel
 import javax.swing.JComponent
-import javax.swing.JLabel
-import javax.swing.JPanel
-import javax.swing.SpringLayout
+import javax.swing.JOptionPane
 
 
-class WizardStep : ModuleWizardStep() {
+class WizardStep(private val sdkService: SdkService) : ModuleWizardStep() {
     override fun getComponent(): JComponent {
         // TODO construct window with:
         // select catcher sdk
@@ -16,28 +17,31 @@ class WizardStep : ModuleWizardStep() {
         // docker) download catcher image
         // conda-catcher) add env with catcher
         // native) point to the catcher executable if not found
-        val layout = SpringLayout()
-        val mainPanel = JPanel()
-        mainPanel.layout = layout
 
-        val comboBoxPane = JPanel() //use FlowLayout
-
-        val comboBoxItems = arrayOf("Catcher", "+ Add new")
-        val cb: ComboBox<*> = ComboBox<Any?>(comboBoxItems)
-        cb.isEditable = false
-        comboBoxPane.add(cb)
-        val sdkLabel = JLabel("Project SDK:")
-        mainPanel.add(sdkLabel)
-        mainPanel.add(JLabel("Test2"))
-        mainPanel.add(comboBoxPane)
-
-        layout.putConstraint(SpringLayout.WEST, sdkLabel, 5, SpringLayout.WEST, mainPanel);
-        layout.putConstraint(SpringLayout.NORTH, sdkLabel, 5, SpringLayout.NORTH, mainPanel);
-
-        return mainPanel
+        val installedSdks: List<SdkType> = sdkService.getAllSdks()
+        val sdkNames: MutableList<String> = installedSdks.map { it.name }.toMutableList()
+        sdkNames.add("+ Add new")
+        val comboBoxItems: Array<String> = sdkNames.toTypedArray()
+        val comboBoxModel = DefaultComboBoxModel(comboBoxItems)
+        return panel {
+            row {
+                label("Project SDK:")
+                comboBox<String>(
+                    comboBoxModel,
+                    { comboBoxModel.selectedItem as String? ?: comboBoxModel.getElementAt(0) },
+                    { comboBoxModel.selectedItem = it })
+                    .component.addActionListener {
+                        if (comboBoxModel.selectedItem == "+ Add new") {
+                            sdkService.addNewSdk() // TODO popup?
+                        }
+                        // TODO save selection somewhere?
+                    }
+            }
+        }
     }
 
     override fun updateDataModel() {
-        //todo update model according to UI
+        // TODO select sdk?
+        // TODO do not finish wizard without sdk selection!
     }
 }

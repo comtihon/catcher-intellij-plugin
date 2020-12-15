@@ -15,7 +15,7 @@ private const val ID = "CATCHER_MODULE_TYPE"
 
 object CatcherModuleType : ModuleType<CatcherModuleBuilder>(ID) {
 
-    fun getInstance(): CatcherModuleType? {
+    fun getInstance(): CatcherModuleType {
         return ModuleTypeManager.getInstance().findByID(ID) as CatcherModuleType
     }
 

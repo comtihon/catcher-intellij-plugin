@@ -9,7 +9,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationService
-                serviceImplementation="com.github.comtihon.catcherintellijplugin.services.MyApplicationService"/>
+                serviceImplementation="com.github.comtihon.catcherintellijplugin.services.SdkService"/>
         <projectService serviceImplementation="com.github.comtihon.catcherintellijplugin.services.MyProjectService"/>
 
         <moduleType id="CATCHER_MODULE_TYPE" implementationClass="com.github.comtihon.catcherintellijplugin.project.CatcherModuleType"/>
