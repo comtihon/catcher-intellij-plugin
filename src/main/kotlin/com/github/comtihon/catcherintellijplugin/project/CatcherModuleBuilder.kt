@@ -20,7 +20,7 @@ class CatcherModuleBuilder : ModuleBuilder() {
     }
 
     @Nullable
-    override fun getCustomOptionsStep(context: WizardContext?, parentDisposable: Disposable?): ModuleWizardStep? {
+    override fun getCustomOptionsStep(context: WizardContext?, parentDisposable: Disposable?): ModuleWizardStep {
         return WizardStep(ServiceManager.getService(SdkService::class.java))
     }
 }

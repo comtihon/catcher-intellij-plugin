@@ -8,9 +8,11 @@
 
 - [ ]  ensure xml is highlighted properly
 - [ ]  new project -> catcher project
+- [ ]  project settings
 - [ ]  run configurations -> run with catcher (docker/internal)
 - [ ]  publish via github actions
 - [ ]  editor autocomplete
+- [ ]  create from existing sources support
 
 <!-- Plugin description -->
 IntelliJ Plugin for [Catcher](https://github.com/comtihon/catcher) end-to-end test framework. 
