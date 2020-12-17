@@ -1,18 +1,17 @@
 package com.github.comtihon.catcherintellijplugin.project.ui
 
 import com.github.comtihon.catcherintellijplugin.services.SdkService
+import com.github.comtihon.catcherintellijplugin.services.tool.Native
+import com.github.comtihon.catcherintellijplugin.services.tool.SystemTool
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.layout.Row
 import com.intellij.ui.layout.panel
+import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.JTextField
-
-enum class SdkGrounding {
-    SYSTEM, DOCKER, VENV, CONDA
-}
 
 class NewSDKDialog : DialogWrapper(true) {
     init {
@@ -24,18 +23,21 @@ class NewSDKDialog : DialogWrapper(true) {
 
     private fun installLocally(row: Row) {
         val service: SdkService = ServiceManager.getService(SdkService::class.java)
-        val installedLocally = service.searchForSystemInstalled()
-        val localVersionField = JTextField(installedLocally ?: "latest")
-        if (installedLocally == null) {
+        val systemTool = Native()
+        val installedLocally = service.searchForInstallations(systemTool)
+        val localVersionField = JTextField(if (installedLocally.isNullOrEmpty()) "latest" else installedLocally[0])
+        val installButton = JButton("Install")
+        if (installedLocally.isNullOrEmpty()) {
             row.row {
                 row {
-                    label("Version to install")
+                    label("Version")
                     localVersionField()
                 }
                 row {
-                    button("Install", actionListener = {
-                        onInstallPress(localVersionField.text, localVersionField)
-                    })
+                    installButton()
+                    installButton.addActionListener {
+                        onInstallPress(localVersionField, systemTool, installButton)
+                    }
                 }
             }
         } else {
@@ -51,6 +53,7 @@ class NewSDKDialog : DialogWrapper(true) {
 
     override fun createCenterPanel(): JComponent {
         val dockerImageField = JTextField("some string")
+        // TODO memorize catcher installation on ok pressed.
         return panel {
             row {
                 label("Where to use Catcher from?")
@@ -98,19 +101,29 @@ class NewSDKDialog : DialogWrapper(true) {
         }
     }
 
-    private fun onInstallPress(version: String, versionComponent: JComponent) {
-        println("install catcher $version")
+    private fun onInstallPress(
+        versionComponent: JTextField,
+        systemTool: SystemTool,
+        button: JButton
+    ) {
         val service: SdkService = ServiceManager.getService(SdkService::class.java)
-        val errorLogs = service.installCatcherLocally()
+        val errorLogs = service.installCatcher(systemTool)
         if (errorLogs != null) {
             JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(
-                "Can't install catcher:$version\n$errorLogs" +
-                        "\nTry running 'pip install catcher' or 'pip3 install catcher' in your terminal.",
+                "Can't install catcher:${versionComponent.text}\n$errorLogs",
                 MessageType.ERROR, null
             ).createBalloon().showInCenterOf(versionComponent)
+        } else {
+            val installedVersion = service.searchForInstallations(systemTool)!![0]
+            JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(
+                "Catcher $installedVersion installed",
+                MessageType.INFO, null
+            ).createBalloon().showInCenterOf(versionComponent)
+            button.text = "Installed"
+            button.isEnabled = false
+            versionComponent.text = installedVersion
+            versionComponent.isEnabled = false
         }
-        println("got $errorLogs")
-        // TODO notify user in case of failure!
     }
 
 }
