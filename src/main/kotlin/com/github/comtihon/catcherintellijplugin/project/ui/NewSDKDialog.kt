@@ -1,16 +1,21 @@
 package com.github.comtihon.catcherintellijplugin.project.ui
 
+import com.github.comtihon.catcherintellijplugin.project.ui.panels.DockerPanel
+import com.github.comtihon.catcherintellijplugin.project.ui.panels.PythonPanel
 import com.github.comtihon.catcherintellijplugin.services.SdkService
 import com.github.comtihon.catcherintellijplugin.services.tool.Native
 import com.github.comtihon.catcherintellijplugin.services.tool.SystemTool
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.MessageType
+import com.intellij.openapi.ui.Splitter
+import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.ui.components.JBList
 import com.intellij.ui.layout.Row
-import com.intellij.ui.layout.panel
 import javax.swing.JButton
 import javax.swing.JComponent
+import javax.swing.JPanel
 import javax.swing.JTextField
 
 class NewSDKDialog : DialogWrapper(true) {
@@ -19,9 +24,37 @@ class NewSDKDialog : DialogWrapper(true) {
         init()
     }
 
-    var dockerImage = "comtihon/catcher:latest"
+
+    override fun createCenterPanel(): JComponent {
+        val panel = Splitter()
+        val sdkPanel = JPanel()
+        val pythonPanel = PythonPanel().create()
+        val dockerPanel = DockerPanel().create()  // TODO check if docker available
+        sdkPanel.add(pythonPanel)
+        sdkPanel.add(dockerPanel)
+        val optionList = JBList("Python", "Docker")  // TODO add icons.
+        panel.firstComponent = optionList
+        dockerPanel.isVisible = false
+        panel.secondComponent = sdkPanel
+        optionList.addListSelectionListener {
+            if(optionList.selectedIndex == 0) {
+                dockerPanel.isVisible = false
+                pythonPanel.isVisible = true
+            } else {
+                dockerPanel.isVisible = true
+                pythonPanel.isVisible = false
+            }
+        }
+        return panel
+    }
+
+    override fun doValidate(): ValidationInfo? {
+        // TODO correct python sdk should be selected.
+        return super.doValidate()
+    }
 
     private fun installLocally(row: Row) {
+        // TODO depend on python plugin and try to get configured python?
         val service: SdkService = ServiceManager.getService(SdkService::class.java)
         val systemTool = Native()
         val installedLocally = service.searchForInstallations(systemTool)
@@ -35,8 +68,12 @@ class NewSDKDialog : DialogWrapper(true) {
                 }
                 row {
                     installButton()
+                    // TODO show external steps selection on install button
                     installButton.addActionListener {
-                        onInstallPress(localVersionField, systemTool, installButton)
+
+//
+                        // TODO save new python sdk?
+//                        onInstallPress(localVersionField, systemTool, installButton)
                     }
                 }
             }
@@ -51,54 +88,11 @@ class NewSDKDialog : DialogWrapper(true) {
         }
     }
 
-    override fun createCenterPanel(): JComponent {
-        val dockerImageField = JTextField("some string")
-        // TODO memorize catcher installation on ok pressed.
-        return panel {
-            row {
-                label("Where to use Catcher from?")
-                buttonGroup {
-                    row {
-                        radioButton(
-                            "System",
-                            "Use Catcher from System's Python (installs if necessary)"
-                        )
-                        hideableRow("Settings") {
-                            installLocally(this)
-                        }
-                    }
-                    row {
-                        radioButton(
-                            "Venv",
-                            "Use Python virtual environment and install Catcher"
-                        )
-                        hideableRow("Settings") {
-                            noteRow("Use System's Python and install Catcher")
-                        }
-                    }
-                    row {
-                        radioButton(
-                            "Conda",
-                            "Use Conda virtual environment and install Catcher"
-                        )
-                        hideableRow("Settings") {
-                            noteRow("Use System's Python and install Catcher")
-                        }
-                    }
-                    row {
-                        radioButton(
-                            "Docker", "Use Catcher docker image with all dependencies " +
-                                    "preinstalled. This require docker service installed locally. Catcher's latest image" +
-                                    "will be downloaded"
-                        )
-                        hideableRow("Settings") {
-                            label("Docker image")
-                            dockerImageField()
-                        }
-                    }
-                }
-            }
-        }
+
+    private fun configureModules() {
+        val selected = mutableListOf<String>()
+        ModulesSelectionDialog(selected).showAndGet() // TODO ensure selected updated
+        // TODO disable this form until selection is closed.
     }
 
     private fun onInstallPress(

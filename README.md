@@ -6,11 +6,12 @@
 
 ## Template ToDo list
 
-- [ ]  ensure xml is highlighted properly
 - [ ]  new project -> catcher project
 - [ ]  project settings
 - [ ]  run configurations -> run with catcher (docker/internal)
+- [ ]  list available libraries (catcher external steps)
 - [ ]  publish via github actions
+- [ ]  ensure xml is highlighted properly
 - [ ]  editor autocomplete
 - [ ]  create from existing sources support
 

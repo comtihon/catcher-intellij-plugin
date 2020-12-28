@@ -12,6 +12,9 @@ import com.intellij.openapi.projectRoots.Sdk
 
 
 class CatcherSdk(name: String): SdkType(name) {
+    // TODO link to python/docker
+
+
     override fun saveAdditionalData(additionalData: SdkAdditionalData, additional: Element) {
         TODO("Not yet implemented")
     }

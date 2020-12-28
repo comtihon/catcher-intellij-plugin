@@ -7,6 +7,8 @@ import com.github.comtihon.catcherintellijplugin.exceptions.ExecutionFailedExcep
  */
 class Native(private val executable: String = "python") : SystemTool() {
 
+    // TODO search for python system executable (python vs python3)
+
     override fun version(): String {
         return executable.runCommand()
     }
