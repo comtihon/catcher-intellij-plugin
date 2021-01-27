@@ -13,7 +13,10 @@
                 serviceImplementation="com.github.comtihon.catcherintellijplugin.services.SdkService"/>
         <projectService serviceImplementation="com.github.comtihon.catcherintellijplugin.services.MyProjectService"/>
 
-        <moduleType id="CATCHER_MODULE_TYPE" implementationClass="com.github.comtihon.catcherintellijplugin.project.CatcherModuleType"/>
+        <moduleType id="CATCHER_MODULE_TYPE"
+                    implementationClass="com.github.comtihon.catcherintellijplugin.project.CatcherModuleType"/>
+
+        <sdkType id="Catcher Sdk" implementation="com.github.comtihon.catcherintellijplugin.project.sdk.CatcherSdkType"/>
 
         <fileType name="Catcher Test File"
                   implementationClass="com.github.comtihon.catcherintellijplugin.language.CatcherFileType"

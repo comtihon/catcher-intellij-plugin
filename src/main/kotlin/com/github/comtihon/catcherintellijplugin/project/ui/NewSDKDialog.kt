@@ -2,10 +2,12 @@ package com.github.comtihon.catcherintellijplugin.project.ui
 
 import com.github.comtihon.catcherintellijplugin.project.ui.panels.DockerPanel
 import com.github.comtihon.catcherintellijplugin.project.ui.panels.PythonPanel
+import com.github.comtihon.catcherintellijplugin.project.ui.panels.SdkSelectionPanel
 import com.github.comtihon.catcherintellijplugin.services.SdkService
 import com.github.comtihon.catcherintellijplugin.services.tool.Native
 import com.github.comtihon.catcherintellijplugin.services.tool.SystemTool
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.Splitter
@@ -24,33 +26,43 @@ class NewSDKDialog : DialogWrapper(true) {
         init()
     }
 
+    private var activeSelectionPanel: SdkSelectionPanel? = null;
+
 
     override fun createCenterPanel(): JComponent {
         val panel = Splitter()
         val sdkPanel = JPanel()
-        val pythonPanel = PythonPanel().create()
-        val dockerPanel = DockerPanel().create()  // TODO check if docker available
+        val pythonPanelContainer = PythonPanel()
+        val dockerPanelContainer = DockerPanel()
+        val pythonPanel = pythonPanelContainer.create()
+        val dockerPanel = dockerPanelContainer.create()  // TODO check if docker available
         sdkPanel.add(pythonPanel)
         sdkPanel.add(dockerPanel)
         val optionList = JBList("Python", "Docker")  // TODO add icons.
         panel.firstComponent = optionList
         dockerPanel.isVisible = false
+        activeSelectionPanel = pythonPanelContainer
         panel.secondComponent = sdkPanel
         optionList.addListSelectionListener {
-            if(optionList.selectedIndex == 0) {
+            if (optionList.selectedIndex == 0) {
                 dockerPanel.isVisible = false
                 pythonPanel.isVisible = true
+                activeSelectionPanel = pythonPanelContainer
             } else {
                 dockerPanel.isVisible = true
                 pythonPanel.isVisible = false
+                activeSelectionPanel = dockerPanelContainer
             }
         }
         return panel
     }
 
     override fun doValidate(): ValidationInfo? {
-        // TODO correct python sdk should be selected.
-        return super.doValidate()
+        val selectedSdk: Sdk = activeSelectionPanel!!.getSelectedSdk() ?: return ValidationInfo("Sdk is not selected")
+        println("-------- catcher sdk panel validate: $selectedSdk")
+        // TODO add catcher to system sdk (this should save catcher sdk)
+        // TODO on ok press catcher should try to install. Notification should be shown (Events)
+        return null
     }
 
     private fun installLocally(row: Row) {
