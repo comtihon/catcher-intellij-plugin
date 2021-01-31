@@ -6,7 +6,9 @@ import com.github.comtihon.catcherintellijplugin.project.ui.panels.SdkSelectionP
 import com.github.comtihon.catcherintellijplugin.services.SdkService
 import com.github.comtihon.catcherintellijplugin.services.tool.Native
 import com.github.comtihon.catcherintellijplugin.services.tool.SystemTool
+import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.MessageType
@@ -35,7 +37,7 @@ class NewSDKDialog : DialogWrapper(true) {
         val pythonPanelContainer = PythonPanel()
         val dockerPanelContainer = DockerPanel()
         val pythonPanel = pythonPanelContainer.create()
-        val dockerPanel = dockerPanelContainer.create()  // TODO check if docker available
+        val dockerPanel = dockerPanelContainer.create()
         sdkPanel.add(pythonPanel)
         sdkPanel.add(dockerPanel)
         val optionList = JBList("Python", "Docker")  // TODO add icons.
@@ -59,7 +61,7 @@ class NewSDKDialog : DialogWrapper(true) {
 
     override fun doValidate(): ValidationInfo? {
         val selectedSdk: Sdk = activeSelectionPanel!!.getSelectedSdk() ?: return ValidationInfo("Sdk is not selected")
-        println("-------- catcher sdk panel validate: $selectedSdk")
+        WriteAction.run<Exception> { ProjectJdkTable.getInstance().addJdk(selectedSdk) }
         // TODO add catcher to system sdk (this should save catcher sdk)
         // TODO on ok press catcher should try to install. Notification should be shown (Events)
         return null

@@ -50,7 +50,7 @@ class PythonPanel : SdkSelectionPanel {
                     }
                 }
             } else {  // use selected python sdk
-                // TODO get installed catcher and update latest version + installed libraries
+                // TODO get installed catcher and update latest version + installed libraries?
             }
         }
         val stepList = JBList<JComponent>()
@@ -76,8 +76,8 @@ class PythonPanel : SdkSelectionPanel {
         // get connected python sdk or return null, as catcher is based on python
         val pythonSdk: @Nullable Sdk = sdkTable.findJdk(pythonSdkModel!!.selectedItem.toString()) ?: return null
         val catcherSdkType = SdkType.findInstance(CatcherSdkType::class.java)
-        val catcherSdk =  ProjectJdkImpl(catcherSdkType.name, catcherSdkType) // TODO version?
-        catcherSdk.sdkAdditionalData = CatcherSdkAdditionalData(pythonSdk, null)
-        return catcherSdk;
+        val catcherSdk =  ProjectJdkImpl(catcherSdkType.name, catcherSdkType) // TODO version? (catcherVersion)
+        catcherSdk.sdkAdditionalData = CatcherSdkAdditionalData(pythonSdk.name, null)
+        return catcherSdk
     }
 }

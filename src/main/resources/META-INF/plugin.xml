@@ -7,6 +7,7 @@
     <!-- https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
     <depends>PythonCore</depends>
+<!--    <depends optional="true">Docker</depends>-->
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationService
@@ -16,7 +17,8 @@
         <moduleType id="CATCHER_MODULE_TYPE"
                     implementationClass="com.github.comtihon.catcherintellijplugin.project.CatcherModuleType"/>
 
-        <sdkType id="Catcher Sdk" implementation="com.github.comtihon.catcherintellijplugin.project.sdk.CatcherSdkType"/>
+        <sdkType id="Catcher Sdk"
+                 implementation="com.github.comtihon.catcherintellijplugin.project.sdk.CatcherSdkType"/>
 
         <fileType name="Catcher Test File"
                   implementationClass="com.github.comtihon.catcherintellijplugin.language.CatcherFileType"

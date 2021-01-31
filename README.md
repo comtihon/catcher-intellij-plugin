@@ -9,6 +9,7 @@
 - [ ]  new project -> catcher project
 - [ ]  project settings
 - [ ]  run configurations -> run with catcher (docker/internal)
+- [ ]  docker optional dependency
 - [ ]  list available libraries (catcher external steps)
 - [ ]  publish via github actions
 - [ ]  ensure xml is highlighted properly

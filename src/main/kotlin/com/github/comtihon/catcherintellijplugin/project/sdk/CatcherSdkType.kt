@@ -3,26 +3,22 @@ package com.github.comtihon.catcherintellijplugin.project.sdk
 import com.github.comtihon.catcherintellijplugin.core.Icons
 import com.github.comtihon.catcherintellijplugin.project.ui.NewSDKDialog
 import com.intellij.openapi.projectRoots.*
-import org.jdom.Element
-import com.intellij.openapi.projectRoots.SdkModificator
-
-import com.intellij.openapi.projectRoots.SdkModel
-
-import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.util.Consumer
+import org.jdom.Element
 import javax.swing.Icon
 import javax.swing.JComponent
 
 
-class CatcherSdkType: SdkType("Catcher") {
+class CatcherSdkType : SdkType("Catcher") {
 
     override fun saveAdditionalData(additionalData: SdkAdditionalData, additional: Element) {
-        // TODO save
+        if (additionalData is CatcherSdkAdditionalData) {
+            additionalData.save(additional)
+        }
     }
 
     override fun loadAdditionalData(currentSdk: Sdk, additional: Element): SdkAdditionalData? {
-        // TODO load
-        return null
+        return CatcherSdkAdditionalData.load(additional)
     }
 
     override fun suggestHomePath(): String? {
@@ -70,5 +66,11 @@ class CatcherSdkType: SdkType("Catcher") {
 
     override fun getPresentableName(): String {
         return name
+    }
+
+    companion object {
+        fun getInstance(): CatcherSdkType {
+            return findInstance(CatcherSdkType::class.java)
+        }
     }
 }

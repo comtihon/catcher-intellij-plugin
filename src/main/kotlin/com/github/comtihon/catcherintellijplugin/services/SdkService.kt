@@ -1,15 +1,18 @@
 package com.github.comtihon.catcherintellijplugin.services
 
 import com.github.comtihon.catcherintellijplugin.exceptions.ExecutionFailedException
+import com.github.comtihon.catcherintellijplugin.project.sdk.CatcherSdkType
 import com.github.comtihon.catcherintellijplugin.services.tool.SystemTool
-import com.intellij.openapi.projectRoots.SdkType
+import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.projectRoots.Sdk
 import org.slf4j.LoggerFactory
 
 class SdkService {
     private val log = LoggerFactory.getLogger(this::class.java)
+    private val sdkTable: ProjectJdkTable = ProjectJdkTable.getInstance()
 
-    fun getAllSdks(): List<SdkType> {
-        return emptyList()
+    fun getAllSdks(): List<Sdk> {
+        return sdkTable.getSdksOfType(CatcherSdkType.getInstance())
     }
 
     fun addNewSdk() {
