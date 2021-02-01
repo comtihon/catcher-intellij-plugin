@@ -21,17 +21,27 @@ class CatcherSdkType : SdkType("Catcher") {
         return CatcherSdkAdditionalData.load(additional)
     }
 
-    override fun suggestHomePath(): String? {
-        TODO("Not yet implemented")
+    override fun suggestHomePath(): String {
+        return "/usr/bin"
     }
 
     override fun isValidSdkHome(path: String?): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
     override fun suggestSdkName(currentSdkName: String?, sdkHome: String?): String {
-        TODO("Not yet implemented")
         // TODO detect sdk version from sdk home (path to python)
+        return "Catcher"
+    }
+
+    override fun getVersionString(sdk: Sdk): String? {
+        if (sdk.sdkAdditionalData != null && sdk.sdkAdditionalData is CatcherSdkAdditionalData) {
+            val version = (sdk.sdkAdditionalData as CatcherSdkAdditionalData).catcherActualVersion
+            if (version != null)
+                return version
+            return (sdk.sdkAdditionalData as CatcherSdkAdditionalData).catcherDesiredVersion  // TODO not installed?
+        }
+        return super.getVersionString(sdk)
     }
 
     override fun getIcon(): Icon {
@@ -45,9 +55,10 @@ class CatcherSdkType : SdkType("Catcher") {
     override fun showCustomCreateUI(
         sdkModel: SdkModel,
         parentComponent: JComponent,
+        selectedSdk: Sdk?,
         sdkCreatedCallback: Consumer<in Sdk>
     ) {
-        NewSDKDialog().showAndGet()
+        NewSDKDialog(sdkCreatedCallback).showAndGet()
     }
 
     override fun setupSdkPaths(sdk: Sdk, sdkModel: SdkModel): Boolean {

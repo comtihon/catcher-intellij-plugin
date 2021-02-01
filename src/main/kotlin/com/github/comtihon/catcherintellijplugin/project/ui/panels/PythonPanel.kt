@@ -76,8 +76,16 @@ class PythonPanel : SdkSelectionPanel {
         // get connected python sdk or return null, as catcher is based on python
         val pythonSdk: @Nullable Sdk = sdkTable.findJdk(pythonSdkModel!!.selectedItem.toString()) ?: return null
         val catcherSdkType = SdkType.findInstance(CatcherSdkType::class.java)
-        val catcherSdk =  ProjectJdkImpl(catcherSdkType.name, catcherSdkType) // TODO version? (catcherVersion)
-        catcherSdk.sdkAdditionalData = CatcherSdkAdditionalData(pythonSdk.name, null)
+
+        // TODO check if catcher installed in the selected python sdk and fill catcherActualVersion
+
+        val catcherSdk = ProjectJdkImpl(catcherSdkType.name, catcherSdkType)
+        catcherSdk.sdkAdditionalData = CatcherSdkAdditionalData(
+            pythonSdk = pythonSdk.name,
+            dockerImage = null,
+            catcherActualVersion = null,
+            catcherDesiredVersion = catcherVersion.text
+        )
         return catcherSdk
     }
 }

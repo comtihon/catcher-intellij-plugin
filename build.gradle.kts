@@ -56,7 +56,7 @@ intellij {
 
     // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file.
     setPlugins(*platformPlugins.split(',').map(String::trim).filter(String::isNotEmpty).toTypedArray())
-    setPlugins("PythonCore:203.5981.165")
+    setPlugins(*listOf("PythonCore:203.5981.165", "com.intellij.java").toTypedArray())
 }
 
 // Configure detekt plugin.

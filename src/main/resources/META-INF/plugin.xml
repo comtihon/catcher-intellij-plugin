@@ -7,9 +7,11 @@
     <!-- https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
     <depends>PythonCore</depends>
+    <depends>com.intellij.modules.java</depends>
 <!--    <depends optional="true">Docker</depends>-->
 
     <extensions defaultExtensionNs="com.intellij">
+        <!--        TODO SdkService? -->
         <applicationService
                 serviceImplementation="com.github.comtihon.catcherintellijplugin.services.SdkService"/>
         <projectService serviceImplementation="com.github.comtihon.catcherintellijplugin.services.MyProjectService"/>
