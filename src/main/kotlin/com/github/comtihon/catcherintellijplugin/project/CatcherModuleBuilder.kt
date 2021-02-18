@@ -1,8 +1,12 @@
 package com.github.comtihon.catcherintellijplugin.project
 
+import com.github.comtihon.catcherintellijplugin.project.sdk.CatcherSdkAdditionalData
 import com.github.comtihon.catcherintellijplugin.project.sdk.CatcherSdkType
 import com.intellij.ide.util.projectWizard.*
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.io.FileUtil
@@ -35,15 +39,21 @@ class CatcherModuleBuilder : ModuleBuilder(), SourcePathsBuilder {
     }
 
     override fun getCustomOptionsStep(context: WizardContext?, parentDisposable: Disposable?): ModuleWizardStep {
-        return ProjectJdkForModuleStep(context!!, CatcherSdkType.getInstance())
+        return object : ProjectJdkForModuleStep(context!!, CatcherSdkType.getInstance()) {
+            override fun updateDataModel() {
+                myJdk = jdk
+                ensureBoundedSdkSaved(jdk)
+                super.updateDataModel()
+            }
+        }
     }
 
     override fun getSourcePaths(): MutableList<Pair<String, String>> {
+        ensureSourcePath("resources")
+        ensureSourcePath("reports")
         if (mySourcePaths.isEmpty()) {
             val paths: MutableList<Pair<String, String>> = ArrayList()
             paths.add(ensureSourcePath("tests"))
-            paths.add(ensureSourcePath("resources"))
-            paths.add(ensureSourcePath("reports"))
             paths.add(ensureSourcePath("steps"))
             paths.add(ensureSourcePath("inventory"))
             return paths
@@ -63,5 +73,18 @@ class CatcherModuleBuilder : ModuleBuilder(), SourcePathsBuilder {
         val path = contentEntryPath + File.separator + dir
         File(path).mkdirs()
         return Pair.create(path, "")
+    }
+
+    /**
+     * If Catcher SDK is created together with Python SDK - the second should be also saved.
+     */
+    private fun ensureBoundedSdkSaved(sdk: Sdk?) {
+        if (sdk != null && sdk.sdkAdditionalData != null) {
+            val additionalData = sdk.sdkAdditionalData as CatcherSdkAdditionalData
+            val sdkTable: ProjectJdkTable = ProjectJdkTable.getInstance()
+            if (additionalData.pythonSdk != null && !sdkTable.allJdks.contains(additionalData.pythonSdk)) {
+                WriteAction.run<Exception> { sdkTable.addJdk(additionalData.pythonSdk) }
+            }
+        }
     }
 }

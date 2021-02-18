@@ -6,14 +6,15 @@
 
 ## Template ToDo list
 
-- [ ]  new project -> catcher project
-- [ ]  project settings
+- [x]  new project -> catcher project
+- [x]  catcher sdk installation (native)
+- [ ]  catcher sdk installation (docker)
 - [ ]  run configurations -> run with catcher (docker/internal)
-- [ ]  docker optional dependency
+- [ ]  editor autocomplete
+- [ ]  project settings
 - [ ]  list available libraries (catcher external steps)
 - [ ]  publish via github actions
 - [ ]  ensure xml is highlighted properly
-- [ ]  editor autocomplete
 - [ ]  create from existing sources support
 
 <!-- Plugin description -->

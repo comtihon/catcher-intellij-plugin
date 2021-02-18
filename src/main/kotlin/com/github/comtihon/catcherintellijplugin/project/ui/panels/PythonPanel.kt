@@ -49,8 +49,6 @@ class PythonPanel : SdkSelectionPanel {
                         pythonSdks.selectedItem = et.name
                     }
                 }
-            } else {  // use selected python sdk
-                // TODO get installed catcher and update latest version + installed libraries?
             }
         }
         val stepList = JBList<JComponent>()
@@ -81,9 +79,7 @@ class PythonPanel : SdkSelectionPanel {
 
         val catcherSdk = ProjectJdkImpl(catcherSdkType.name, catcherSdkType)
         catcherSdk.sdkAdditionalData = CatcherSdkAdditionalData(
-            pythonSdk = pythonSdk.name,
-            dockerImage = null,
-            catcherActualVersion = null,
+            pythonSdk = pythonSdk,
             catcherDesiredVersion = catcherVersion.text
         )
         return catcherSdk

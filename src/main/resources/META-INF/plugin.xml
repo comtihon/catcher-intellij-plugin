@@ -8,13 +8,15 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>PythonCore</depends>
     <depends>com.intellij.modules.java</depends>
-<!--    <depends optional="true">Docker</depends>-->
+    <!--    <depends optional="true">Docker</depends>-->
 
     <extensions defaultExtensionNs="com.intellij">
-        <!--        TODO SdkService? -->
+        <configurationType
+                implementation="com.github.comtihon.catcherintellijplugin.project.run.CatcherRunConfigurationType"/>
         <applicationService
                 serviceImplementation="com.github.comtihon.catcherintellijplugin.services.SdkService"/>
-        <projectService serviceImplementation="com.github.comtihon.catcherintellijplugin.services.MyProjectService"/>
+        <projectService
+                serviceImplementation="com.github.comtihon.catcherintellijplugin.services.CatcherSdkService"/>
 
         <moduleType id="CATCHER_MODULE_TYPE"
                     implementationClass="com.github.comtihon.catcherintellijplugin.project.CatcherModuleType"/>
@@ -25,6 +27,14 @@
         <fileType name="Catcher Test File"
                   implementationClass="com.github.comtihon.catcherintellijplugin.language.CatcherFileType"
                   fieldName="INSTANCE" language="Catcher" extensions="xml"/>
+
+        <postStartupActivity
+                implementation="com.github.comtihon.catcherintellijplugin.project.activity.ProjectStartupActivity"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="Pythonid">
+        <packageManagerProvider
+                implementation="com.github.comtihon.catcherintellijplugin.project.sdk.PipEnvBasedPackageManagerProvider"/>
     </extensions>
 
     <applicationListeners>

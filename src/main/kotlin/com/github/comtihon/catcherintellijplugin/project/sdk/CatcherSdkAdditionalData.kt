@@ -1,25 +1,38 @@
 package com.github.comtihon.catcherintellijplugin.project.sdk
 
+import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkAdditionalData
 import org.jdom.Element
 
 // TODO modules versions?
 // TODO isInstalled flag/status?
 class CatcherSdkAdditionalData(
-    val pythonSdk: String?,
-    val dockerImage: String?,
-    val catcherActualVersion: String?,
-    val catcherDesiredVersion: String?
+    val pythonSdk: Sdk?,
+    val dockerImage: String? = null,
+    val catcherDesiredVersion: String?,
+    val catcherActualVersion: String? = null,
+    private val sdkName: String? = null
 ) : SdkAdditionalData {
+
     fun save(rootElement: Element) {
-        if (pythonSdk != null)
-            rootElement.setAttribute("ASSOCIATED_PYTHON_SDK", pythonSdk)
+        if (pythonSdk != null) {
+            rootElement.setAttribute("ASSOCIATED_PYTHON_SDK", pythonSdk.name)
+        }
         if (catcherActualVersion != null)
             rootElement.setAttribute("CORE_ACTUAL_VERSION", catcherActualVersion)
         if (catcherDesiredVersion != null)
             rootElement.setAttribute("CORE_DESIRED_VERSION", catcherDesiredVersion)
     }
 
+    fun getBoundedSdk(): Sdk? {
+        if (pythonSdk != null)
+            return pythonSdk
+        // TODO docker image
+        if (sdkName != null)
+            return ProjectJdkTable.getInstance().findJdk(sdkName)
+        return null
+    }
 
     companion object {
         fun load(element: Element?): CatcherSdkAdditionalData? {
@@ -29,10 +42,11 @@ class CatcherSdkAdditionalData(
                 val catcherDesiredVersion = element.getAttributeValue("CORE_DESIRED_VERSION")
                 if (sdkName != null) {
                     return CatcherSdkAdditionalData(
-                        pythonSdk = sdkName,
+                        pythonSdk = null,
                         dockerImage = null,
                         catcherActualVersion = catcherActualVersion,
-                        catcherDesiredVersion = catcherDesiredVersion
+                        catcherDesiredVersion = catcherDesiredVersion,
+                        sdkName = sdkName
                     )
                 }
             }
